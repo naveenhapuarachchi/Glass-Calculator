@@ -28,14 +28,14 @@ A modern, stylish, and fully functional calculator with a **glass morphism** UI.
 
 1. Clone the repository:
    ```sh
-   git clone!(https://github.com/user-attachments/assets/46cbbef4-d17f-4d7a-9a87-1819479c4b8c)
+   git clone!
 
    ```
 
 ## 📸 Screenshot
 
 ![Glass Calculator Preview]!(https://github.com/user-attachments/assets/007ba1e8-7644-4dca-88b4-f3faa47ab7cf)
-
+With back-gound(https://github.com/user-attachments/assets/46cbbef4-d17f-4d7a-9a87-1819479c4b8c)
 
 2. Open `index.html` in your browser.
 
