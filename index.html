@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Glass Calculator</title>
+    <style>
+        /* (Keep the same CSS styles as original) */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', sans-serif;
+        }
+
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background: linear-gradient(45deg, #ff6b6b, #4ecdc4);
+        }
+
+        .calculator {
+            position: relative;
+            backdrop-filter: blur(16px) saturate(180%);
+            -webkit-backdrop-filter: blur(16px) saturate(180%);
+            background-color: rgba(255, 255, 255, 0.75);
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.125);
+            padding: 20px;
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+            width: 340px;
+        }
+
+        .display {
+            background-color: rgba(255, 255, 255, 0.9);
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            text-align: right;
+            font-size: 2em;
+            font-weight: 300;
+            color: #333;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
+            min-height: 80px;
+        }
+
+        /* (Keep the rest of the CSS the same) */
+        .buttons {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+        }
+
+        button {
+            padding: 18px;
+            border: none;
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 10px;
+            font-size: 1.2em;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            color: #333;
+            backdrop-filter: blur(5px);
+        }
+
+        button:hover {
+            background: rgba(255, 255, 255, 1);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        .operator {
+            background: linear-gradient(45deg, #ff6b6b, #ff8e8e);
+            color: white;
+        }
+
+        .equals {
+            background: linear-gradient(45deg, #4ecdc4, #66d3ca);
+            color: white;
+            grid-column: span 2;
+        }
+
+        .clear {
+            background: rgba(255, 255, 255, 0.5);
+            color: #ff6b6b;
+        }
+
+        @media (max-width: 480px) {
+            .calculator {
+                width: 90%;
+                padding: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="calculator">
+        <div class="display">0</div>
+        <div class="buttons">
+            <button class="clear" data-action="clear">C</button>
+            <button data-action="delete">⌫</button>
+            <button class="operator" data-action="divide">÷</button>
+            <button class="operator" data-action="multiply">×</button>
+            <button data-number="7">7</button>
+            <button data-number="8">8</button>
+            <button data-number="9">9</button>
+            <button class="operator" data-action="subtract">-</button>
+            <button data-number="4">4</button>
+            <button data-number="5">5</button>
+            <button data-number="6">6</button>
+            <button class="operator" data-action="add">+</button>
+            <button data-number="1">1</button>
+            <button data-number="2">2</button>
+            <button data-number="3">3</button>
+            <button data-number="0">0</button>
+            <button data-number=".">.</button>
+            <button class="equals" data-action="calculate">=</button>
+        </div>
+    </div>
+
+    <script>
+        class Calculator {
+            constructor() {
+                this.display = document.querySelector('.display');
+                this.buttons = document.querySelector('.buttons');
+                this.currentValue = '';
+                this.firstOperand = null;
+                this.operator = null;
+                this.waitingForSecondOperand = false;
+                this.operatorMap = {
+                    add: '+',
+                    subtract: '-',
+                    multiply: '×',
+                    divide: '÷'
+                };
+
+                this.buttons.addEventListener('click', (e) => this.handleButtonClick(e));
+            }
+
+            updateDisplay() {
+                if (this.operator && this.firstOperand !== null) {
+                    const operatorSymbol = this.operatorMap[this.operator];
+                    this.display.textContent = `${this.firstOperand} ${operatorSymbol} ${this.currentValue || ''}`;
+                } else {
+                    this.display.textContent = this.currentValue || '0';
+                }
+            }
+
+            inputDigit(digit) {
+                if (this.waitingForSecondOperand) {
+                    this.currentValue = digit;
+                    this.waitingForSecondOperand = false;
+                } else {
+                    this.currentValue = this.currentValue === '0' ? digit : this.currentValue + digit;
+                }
+            }
+
+            inputDecimal() {
+                if (!this.currentValue.includes('.')) {
+                    this.currentValue += this.currentValue === '' ? '0.' : '.';
+                }
+            }
+
+            clear() {
+                this.currentValue = '';
+                this.firstOperand = null;
+                this.operator = null;
+                this.waitingForSecondOperand = false;
+            }
+
+            deleteLast() {
+                this.currentValue = this.currentValue.slice(0, -1);
+                if (this.currentValue === '') this.currentValue = '0';
+            }
+
+            handleOperator(nextOperator) {
+                const inputValue = parseFloat(this.currentValue);
+                
+                if (this.operator && this.waitingForSecondOperand) {
+                    this.operator = nextOperator;
+                    this.updateDisplay();
+                    return;
+                }
+
+                if (this.firstOperand === null) {
+                    this.firstOperand = inputValue;
+                } else if (this.operator) {
+                    const result = this.calculate();
+                    this.currentValue = `${result}`;
+                    this.firstOperand = result;
+                }
+
+                this.waitingForSecondOperand = true;
+                this.operator = nextOperator;
+                this.currentValue = '';
+                this.updateDisplay();
+            }
+
+            calculate() {
+                const secondOperand = parseFloat(this.currentValue);
+                let result;
+                
+                switch (this.operator) {
+                    case 'add':
+                        result = this.firstOperand + secondOperand;
+                        break;
+                    case 'subtract':
+                        result = this.firstOperand - secondOperand;
+                        break;
+                    case 'multiply':
+                        result = this.firstOperand * secondOperand;
+                        break;
+                    case 'divide':
+                        result = secondOperand === 0 ? 'Error' : this.firstOperand / secondOperand;
+                        break;
+                    default:
+                        result = secondOperand;
+                }
+
+                if (result === 'Error' || isNaN(result)) {
+                    this.clear();
+                    return 'Error';
+                }
+                
+                return Number.isInteger(result) ? result : result.toFixed(4);
+            }
+
+            handleButtonClick(e) {
+                if (!e.target.matches('button')) return;
+
+                const { action, number } = e.target.dataset;
+
+                if (number) {
+                    if (number === '.') {
+                        this.inputDecimal();
+                    } else {
+                        this.inputDigit(number);
+                    }
+                    this.updateDisplay();
+                    return;
+                }
+
+                if (action === 'clear') {
+                    this.clear();
+                    this.updateDisplay();
+                    return;
+                }
+
+                if (action === 'delete') {
+                    this.deleteLast();
+                    this.updateDisplay();
+                    return;
+                }
+
+                if (action === 'calculate') {
+                    if (this.operator && !this.waitingForSecondOperand) {
+                        const result = this.calculate();
+                        this.currentValue = `${result}`;
+                        this.firstOperand = null;
+                        this.operator = null;
+                        this.waitingForSecondOperand = false;
+                        this.updateDisplay();
+                    }
+                    return;
+                }
+
+                this.handleOperator(action);
+            }
+        }
+
+        const calculator = new Calculator();
+    </script>
+</body>
+</html>
