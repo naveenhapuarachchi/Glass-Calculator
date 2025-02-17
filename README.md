@@ -1,7 +1,7 @@
 # Glass-Calculator
 A sleek, modern calculator with a glass morphism UI. Built with HTML, CSS, and JavaScript, it supports basic arithmetic operations, decimal calculations, and error handling. Fully responsive and easy to use! 🚀
 
-🔗 Live Demo() | 🛠 Open-source | ❤️ Made with love
+🔗 [Live Demo](https://glass-calculator-ecru.vercel.app/) | 🛠 Open-source | ❤️ Made with love
 
 ```md
 # Glass Calculator
@@ -35,9 +35,9 @@ A modern, stylish, and fully functional calculator with a **glass morphism** UI.
 ## 📸 Screenshot
 
 -![Glass Calculator Preview]!
-https://github.com/user-attachments/assets/007ba1e8-7644-4dca-88b4-f3faa47ab7cf
+[](https://github.com/user-attachments/assets/007ba1e8-7644-4dca-88b4-f3faa47ab7cf)
 -With back-gound
-https://github.com/user-attachments/assets/46cbbef4-d17f-4d7a-9a87-1819479c4b8c
+[](https://github.com/user-attachments/assets/46cbbef4-d17f-4d7a-9a87-1819479c4b8c)
 
 2. Open `index.html` in your browser.
 
